@@ -27,19 +27,22 @@
 }
 - (IBAction)RegistBtnAction:(UIButton *)sender {
     
-    NSString *URLString = kBaseURL;
-    NSDictionary *parameters = @{@"foo": @"bar", @"baz": @[@1, @2, @3]};
+    NSString *URLString = [NSString stringWithFormat:@"%@/regist",kBaseURL];
+    NSDictionary *parameters = @{@"username": self.tfUsername.text, @"password": self.tfPassword.text};
     
-    
-   NSURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"GET" URLString:URLString parameters:parameters error:nil];
-    
+    //    NSURLRequest *request = [[AFHTTPRequestSerializer serializer] requestWithMethod:@"POST" URLString:URLString parameters:parameters error:nil];
+    NSURLRequest *request = [[AFJSONRequestSerializer serializer] requestWithMethod:@"POST" URLString:URLString parameters:parameters error:nil];
     
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
-    manager.responseSerializer = [AFHTTPResponseSerializer serializer];
+    //    manager.responseSerializer = [AFJSONResponseSerializer serializer];
     
-//    NSURL *URL = [NSURL URLWithString:@"http://httpbin.org/get"];
-//    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
+    manager.responseSerializer = [AFJSONResponseSerializer
+                                  serializerWithReadingOptions:NSJSONReadingAllowFragments];
+    
+    
+    //    NSURL *URL = [NSURL URLWithString:@"http://httpbin.org/get"];
+    //    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     
     NSURLSessionDataTask *dataTask = [manager dataTaskWithRequest:request completionHandler:^(NSURLResponse *response, id responseObject, NSError *error) {
         if (error) {
@@ -49,8 +52,6 @@
         }
     }];
     [dataTask resume];
-
-    
     
     
 }
